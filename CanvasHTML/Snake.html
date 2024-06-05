@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Игра Змейка</title>
+<style>
+  canvas {
+    display: block;
+    margin: auto;
+    background: #f0f0f0;
+    border: 1px solid black;
+  }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+<script>
+  var canvas = document.getElementById('gameCanvas');
+  var ctx = canvas.getContext('2d');
+  var gridSize = 20;
+  var tileSize = canvas.width / gridSize;
+  var snake = [{x: 8, y: 8}];
+  var apple = {x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize)};
+  var velocity = {x: 0, y: 0};
+  var score = 0;
+
+  function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateSnake();
+    drawApple();
+    drawSnake();
+    setTimeout(gameLoop, 1000 / 10); 
+  }
+
+  function updateSnake() {
+    var head = {x: snake[0].x + velocity.x, y: snake[0].y + velocity.y};
+    snake.unshift(head);
+    if (head.x === apple.x && head.y === apple.y) {
+      score++;
+      apple.x = Math.floor(Math.random() * gridSize);
+      apple.y = Math.floor(Math.random() * gridSize);
+    } else {
+      snake.pop();
+    }
+  }
+
+  function drawSnake() {
+    ctx.fillStyle = 'green';
+    snake.forEach(function(part) {
+      ctx.fillRect(part.x * tileSize, part.y * tileSize, tileSize, tileSize);
+    });
+  }
+
+  function drawApple() {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(apple.x * tileSize, apple.y * tileSize, tileSize, tileSize);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.which === 37 && velocity.x === 0) velocity = {x: -1, y: 0};
+    if (e.which === 38 && velocity.y === 0) velocity = {x: 0, y: -1};
+    if (e.which === 39 && velocity.x === 0) velocity = {x: 1, y: 0};
+    if (e.which === 40 && velocity.y === 0) velocity = {x: 0, y: 1};
+  });
+
+  gameLoop();
+</script>
+</body>
+</html>

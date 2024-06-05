@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  canvas {
+    border: 1px solid #000;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="drawingCanvas" width="800" height="600"></canvas>
+<label for="lineWidth">Толщина линии:</label>
+<input type="range" id="lineWidth" min="1" max="10" value="1">
+<label for="lineColor">Цвет линии:</label>
+<input type="color" id="lineColor">
+
+<script>
+  var canvas = document.getElementById('drawingCanvas');
+  var ctx = canvas.getContext('2d');
+  var drawing = false;
+  var lineWidth = document.getElementById('lineWidth');
+  var lineColor = document.getElementById('lineColor');
+
+  function startDrawing(e) {
+    drawing = true;
+    draw(e); // Это для того, чтобы рисовать точки
+  }
+
+  function stopDrawing() {
+    drawing = false;
+    ctx.beginPath(); // Начинаем новый путь, чтобы следующая линия не соединялась с предыдущей
+  }
+
+  function draw(e) {
+    if (!drawing) return;
+    ctx.lineWidth = lineWidth.value;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = lineColor.value;
+
+    ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+  }
+
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseout', stopDrawing);
+  canvas.addEventListener('mousemove', draw);
+</script>
+
+</body>
+</html>
